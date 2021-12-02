@@ -60,7 +60,10 @@ resource "azurerm_app_service" "mass-bot" {
   app_service_plan_id = azurerm_app_service_plan.mass-bot.id
 
   site_config {
+    acr_use_managed_identity_credentials = true
+    acr_user_managed_identity_client_id  = azurerm_user_assigned_identity.mass-bot.id
+
     always_on        = false
-    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mass-bot:0b53e754dc29aee5f8be236e9311432145b8aeb2"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mass-bot:24cbbca15a24c11529348d2614d3499cba28ab50"
   }
 }
