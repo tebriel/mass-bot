@@ -26,6 +26,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - run: |
-          docker build . -t froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }} -t mass-bot/mass-bot:${{ github.sha }}
+          docker build . -t froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }} -t ${{ secrets.DOCKER_USERNAME }}/mass-bot:${{ github.sha }}
           docker push froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}
-          docker push mass-bot/mass-bot:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/mass-bot:${{ github.sha }}
