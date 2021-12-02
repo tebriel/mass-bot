@@ -40,11 +40,11 @@ resource "azurerm_key_vault" "mass-bot" {
 }
 
 resource "azurerm_app_service_plan" "mass-bot" {
-  name = "mass-bot"
-  location = azurerm_resource_group.mass-bot.location
+  name                = "mass-bot"
+  location            = azurerm_resource_group.mass-bot.location
   resource_group_name = azurerm_resource_group.mass-bot.name
 
-  kind = "Linux"
+  kind     = "Linux"
   reserved = true
 
   sku {
@@ -54,13 +54,13 @@ resource "azurerm_app_service_plan" "mass-bot" {
 }
 
 resource "azurerm_app_service" "mass-bot" {
-  name = "mass-bot"
-  location = azurerm_resource_group.mass-bot.location
+  name                = "mass-bot"
+  location            = azurerm_resource_group.mass-bot.location
   resource_group_name = azurerm_resource_group.mass-bot.name
   app_service_plan_id = azurerm_app_service_plan.mass-bot.id
 
   site_config {
-    always_on = false
+    always_on        = false
     linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mass-bot:0b53e754dc29aee5f8be236e9311432145b8aeb2"
   }
 }
