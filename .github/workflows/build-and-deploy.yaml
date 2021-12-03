@@ -15,11 +15,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@main
-
-    - name: Authenticate using a Service Principal
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_SP }}
       
     - uses: azure/docker-login@v1
       with:
