@@ -40,6 +40,6 @@ resource "azurerm_container_group" "mass-bot" {
   timeouts {}
 
   lifecycle {
-    ignore_changes = [container[0].image, container[0].secure_environment_variables]
+    ignore_changes = [image_registry_credential, container]
   }
 }
