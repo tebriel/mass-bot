@@ -32,5 +32,7 @@ async def ping(event: hikari.GuildMessageCreateEvent) -> None:
         await event.message.respond("Pong!")
     elif event.content.startswith(".who are you"):
         await event.message.respond(f"I am {os.getenv('GITHUB_SHA')}")
+    elif "taco johns" in event.content:
+        await event.message.response("Nachos navidad?!")
 
 bot.run()
