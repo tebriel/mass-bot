@@ -8,7 +8,8 @@ resource "azurerm_container_group" "mass-bot" {
   resource_group_name = azurerm_resource_group.mass-bot.name
   location            = azurerm_resource_group.mass-bot.location
   os_type             = "Linux"
-  restart_policy      = "OnFailure"
+  restart_policy      = "Always"
+  dns_name_label      = "mass-bot"
 
   tags = {}
 
@@ -25,8 +26,8 @@ resource "azurerm_container_group" "mass-bot" {
     }
 
     ports {
-      port     = 9090
-      protocol = "UDP"
+      port     = 80
+      protocol = "TCP"
     }
   }
 
