@@ -21,7 +21,7 @@ resource "azurerm_container_group" "mass-bot" {
 
     }
     secure_environment_variables = {
-      BOT_GATEWAY_TOKEN = var.bot_gateway_token
+      BOT_GATEWAY_TOKEN = var.BOT_GATEWAY_TOKEN
     }
 
     ports {
