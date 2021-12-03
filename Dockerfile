@@ -6,5 +6,6 @@ WORKDIR /workdir
 COPY requirements.txt /workdir/requirements.txt
 RUN pip install -r requirements.txt
 COPY bot /workdir/bot
+COPY script /workdir/script
 
-CMD [ "python", "bot/__init__.py" ]
+CMD "script/start.sh"

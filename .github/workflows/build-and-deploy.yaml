@@ -5,6 +5,10 @@ on:
     branches:
     - main
 
+env:
+  AZURE_WEBAPP_NAME: mass-bot
+  CONTAINER_REGISTRY: ${{ secrets.REGISTRY_URL }}
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -13,24 +17,24 @@ jobs:
     - uses: actions/checkout@main
 
     - name: Authenticate using a Service Principal
-      uses: azure/actions/login@v1
+      uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_SP }}
       
     - uses: azure/docker-login@v1
       with:
-        login-server: froduxcontainerregistry.azurecr.io
+        login-server: ${{ env.CONTAINER_REGISTRY }}
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
 
-    - name: Build and push the image tagged with the git commit hash
+    - name: Docker Build & Push to ACR
       run: |
-          docker build . -t froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}
-          docker push froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}
+          docker build . -t ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
+          docker push ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
 
     - name: Update image tag on the Azure Web App
-      uses: azure/webapps-container-deploy@v1
+      uses: azure/webapps-deploy@v2
       with:
-        app-name: 'mass-bot'
-        slot-name: 'production'
-        images: 'froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}'
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        images: ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
+        startup-command: 'python bot/__init__.py'
