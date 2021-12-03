@@ -15,7 +15,7 @@ resource "azurerm_container_group" "mass-bot" {
 
   container {
     name   = "mass-bot"
-    image  = "${azurerm_container_registry.acr.login_server}/mass-bot/mass-bot:latest"
+    image  = "${data.azurerm_container_registry.acr.login_server}/mass-bot/mass-bot:latest"
     cpu    = "1"
     memory = "1.5"
     environment_variables = {
@@ -32,9 +32,9 @@ resource "azurerm_container_group" "mass-bot" {
   }
 
   image_registry_credential {
-    server   = azurerm_container_registry.acr.login_server
-    username = azurerm_container_registry.acr.admin_username
-    password = azurerm_container_registry.acr.admin_password
+    server   = data.azurerm_container_registry.acr.login_server
+    username = data.azurerm_container_registry.acr.admin_username
+    password = data.azurerm_container_registry.acr.admin_password
   }
 
   timeouts {}
