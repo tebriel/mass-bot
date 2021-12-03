@@ -48,3 +48,4 @@ jobs:
         memory: '1.5'
         secure-environment-variables: BOT_GATEWAY_TOKEN=${{ secrets.BOT_GATEWAY_TOKEN }}
         ip-address: 'Private'
+        dns-name-label: 'Default Port'
