@@ -1,0 +1,36 @@
+name: Build and deploy a container image to Azure Web Apps
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@main
+
+    - name: Authenticate using a Service Principal
+      uses: azure/actions/login@v1
+      with:
+        creds: ${{ secrets.AZURE_SP }}
+      
+    - uses: azure/docker-login@v1
+      with:
+        login-server: froduxcontainerregistry.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and push the image tagged with the git commit hash
+      run: |
+          docker build . -t froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}
+          docker push froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}
+
+    - name: Update image tag on the Azure Web App
+      uses: azure/webapps-container-deploy@v1
+      with:
+        app-name: 'mass-bot'
+        slot-name: 'production'
+        images: 'froduxcontainerregistry.azurecr.io/mass-bot/mass-bot:${{ github.sha }}'
