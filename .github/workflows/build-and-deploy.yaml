@@ -15,6 +15,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@main
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       
     - uses: azure/docker-login@v1
       with:
@@ -28,9 +34,16 @@ jobs:
           docker push ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
           docker push ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:latest
 
-    # - name: Update image tag on the Azure Web App
-    #   uses: azure/webapps-deploy@v2
-    #   with:
-    #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
-    #     images: ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
-    #     startup-command: 'script/start.sh'
+    - name: 'Deploy to Azure Container Instances'
+      uses: 'azure/aci-deploy@v1'
+      with:
+        resource-group: mass-bot
+        image: ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
+        registry-login-server: ${{ env.CONTAINER_REGISTRY }}
+        registry-username: ${{ secrets.ACR_USERNAME }}
+        registry-password: ${{ secrets.ACR_PASSWORD }}
+        name: mass-bot
+        location: 'east us 2'
+        cpu: '1'
+        memory: '1.5'
+        secure-environment-variables: BOT_GATEWAY_TOKEN=${{ secrets.BOT_GATEWAY_TOKEN }}
