@@ -29,12 +29,13 @@ jobs:
 
     - name: Docker Build & Push to ACR
       run: |
-          docker build . -t ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
+          docker build . -t ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }} -t ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:latest
           docker push ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
+          docker push ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:latest
 
-    - name: Update image tag on the Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        images: ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
-        startup-command: 'script/start.sh'
+    # - name: Update image tag on the Azure Web App
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+    #     images: ${{ env.CONTAINER_REGISTRY }}/mass-bot/mass-bot:${{ github.sha }}
+    #     startup-command: 'script/start.sh'

@@ -3,85 +3,42 @@ resource "azurerm_resource_group" "mass-bot" {
   location = "East US 2"
 }
 
-data "azurerm_client_config" "current" {}
-
-resource "azurerm_key_vault" "mass-bot" {
-  name                        = "mass-bot"
-  location                    = azurerm_resource_group.mass-bot.location
-  resource_group_name         = azurerm_resource_group.mass-bot.name
-  enabled_for_disk_encryption = true
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
-
-  sku_name = "standard"
-
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "get",
-    ]
-
-    secret_permissions = [
-      "set",
-      "get",
-      "delete",
-      "purge",
-      "recover",
-      "list"
-    ]
-
-    storage_permissions = [
-      "get",
-    ]
-  }
-}
-
-resource "azurerm_app_service_plan" "mass-bot" {
+resource "azurerm_container_group" "mass-bot" {
   name                = "mass-bot"
-  location            = azurerm_resource_group.mass-bot.location
   resource_group_name = azurerm_resource_group.mass-bot.name
-
-  kind     = "Linux"
-  reserved = true
-
-  sku {
-    tier = "Standard"
-    size = "S1"
-  }
-}
-
-resource "azurerm_app_service" "mass-bot" {
-  name                = "mass-bot"
   location            = azurerm_resource_group.mass-bot.location
-  resource_group_name = azurerm_resource_group.mass-bot.name
-  app_service_plan_id = azurerm_app_service_plan.mass-bot.id
+  os_type             = "Linux"
+  restart_policy      = "OnFailure"
 
-  app_settings = {
-    "DOCKER_REGISTRY_SERVER_URL"          = "https://${azurerm_container_registry.acr.login_server}"
-    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "false"
-    "BOT_GATEWAY_TOKEN"                   = ""
+  tags = {}
+
+  container {
+    name   = "mass-bot"
+    image  = "${azurerm_container_registry.acr.login_server}/mass-bot/mass-bot:latest"
+    cpu    = "1"
+    memory = "1.5"
+    environment_variables = {
+
+    }
+    secure_environment_variables = {
+      BOT_GATEWAY_TOKEN = var.bot_gateway_token
+    }
+
+    ports {
+      port     = 9090
+      protocol = "UDP"
+    }
   }
 
-  site_config {
-    acr_use_managed_identity_credentials = true
-
-    always_on        = false
-    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/mass-bot/mass-bot:26e8134ff013d46b65bb825d42235dafacfefa10"
+  image_registry_credential {
+    server   = azurerm_container_registry.acr.login_server
+    username = azurerm_container_registry.acr.admin_username
+    password = azurerm_container_registry.acr.admin_password
   }
 
-  identity {
-    type = "SystemAssigned"
-  }
+  timeouts {}
 
   lifecycle {
-    ignore_changes = [site_config[0].linux_fx_version, app_settings["BOT_GATEWAY_TOKEN"]]
+    ignore_changes = [container[0].image, container[0].secure_environment_variables]
   }
-
-}
-
-output "tfoutput" {
-  value = azurerm_container_registry.acr.login_server
 }
