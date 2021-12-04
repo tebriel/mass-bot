@@ -1,1 +1,1 @@
-bot: python bot/__init__.py
+bot: script/start.sh

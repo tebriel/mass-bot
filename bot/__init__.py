@@ -2,6 +2,7 @@
 import os
 import hikari
 from hikari import Permissions, Intents
+from bot import cool_beans
 
 bot_permissions = (
     Permissions.VIEW_CHANNEL
@@ -35,5 +36,8 @@ async def ping(event: hikari.GuildMessageCreateEvent) -> None:
     elif "taco johns" in event.content:
         await event.message.add_reaction("🌮")
         await event.message.respond("Nachos navidad?!")
+    elif event.content.startswith(".cool beans"):
+        await cool_beans.handle(event)
 
-bot.run()
+if __name__ == '__main__':
+    bot.run()

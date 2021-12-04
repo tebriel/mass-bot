@@ -1,1 +1,2 @@
 hikari
+azure-storage-blob
