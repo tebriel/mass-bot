@@ -9,5 +9,8 @@ setup(name='mass-bot',
       author_email='821688+tebriel@users.noreply.github.com',
       url='https://github.com/tebriel/mass-bot/',
       packages=['bot'],
-      requires=['hikari', 'azure-storage-blob'],
+      install_requires=[
+            'hikari',
+            'azure-storage-blob',
+      ],
 )

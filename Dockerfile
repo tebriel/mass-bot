@@ -7,6 +7,7 @@ COPY requirements.txt /workdir/requirements.txt
 RUN pip install -r requirements.txt
 COPY bot /workdir/bot
 COPY script /workdir/script
+COPY setup.py /workdir/
 
 RUN pip install -e .
 
