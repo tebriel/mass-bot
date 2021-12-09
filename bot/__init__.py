@@ -36,6 +36,8 @@ async def ping(event: hikari.GuildMessageCreateEvent) -> None:
     elif "taco johns" in event.content:
         await event.message.add_reaction("🌮")
         await event.message.respond("Nachos navidad?!")
+    elif "!hybrid" in event.context:
+        await event.message.respond("Hybrid Performance Method: https://www.hybridperformancemethod.com/ MASS to save 5% on all training & nutrition")
     elif event.content.startswith(".cool beans"):
         await cool_beans.handle(event)
 
